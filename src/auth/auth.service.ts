@@ -1,0 +1,163 @@
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { InjectModel } from '@nestjs/sequelize';
+import { User } from '../models/user.model';
+import { JwtPayload } from './jwt.strategy';
+import { EmailService } from '../email/email.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    @InjectModel(User)
+    private userModel: typeof User,
+    private jwtService: JwtService,
+    private emailService: EmailService,
+    private cloudinaryService: CloudinaryService,
+  ) { }
+
+  async validateUser(email: string): Promise<User | null> {
+    return this.userModel.findOne({ where: { email } });
+  }
+
+  async createUser(email: string, name: string, googleId?: string): Promise<User> {
+    return this.userModel.create({
+      email,
+      name,
+      googleId: googleId || null,
+    });
+  }
+
+  async findOrCreateUser(email: string, name: string, googleId?: string): Promise<User> {
+    let user = await this.validateUser(email);
+    if (!user) {
+      user = await this.createUser(email, name, googleId);
+    }
+    return user;
+  }
+
+  async generateJwtToken(user: User): Promise<string> {
+    const payload: JwtPayload = { id: user.id };
+    return this.jwtService.sign(payload);
+  }
+
+  async login(user: User, ipAddress: string = '0.0.0.0') {
+    const token = await this.generateJwtToken(user);
+
+    // Send login notification email
+    try {
+      await this.emailService.sendLoginNotification(
+        user.email,
+        user.name,
+        ipAddress,
+        new Date(),
+      );
+    } catch (error) {
+      // Log error but don't fail the login
+      console.error('Failed to send login notification email:', error);
+    }
+
+    return {
+      access_token: token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        avatarUrl: user.avatarUrl,
+      },
+    };
+  }
+
+  async updateAvatar(userId: string, file: Express.Multer.File) {
+    const user = await this.userModel.findByPk(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!file || !file.buffer) {
+      throw new UnauthorizedException('No file provided');
+    }
+
+    const uploadResult = await this.cloudinaryService.uploadImage(file.buffer);
+
+    await user.update({ avatarUrl: uploadResult.secure_url });
+
+    return {
+      message: 'Avatar updated successfully',
+      avatarUrl: user.avatarUrl,
+    };
+  }
+
+  /**
+   * Generate a 6-digit OTP
+   */
+  private generateOTP(): string {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+
+  /**
+   * Send OTP to user's email
+   * Throws NotFoundException if email doesn't exist
+   */
+  async sendOTP(email: string): Promise<{ message: string }> {
+    const user = await this.validateUser(email);
+
+    if (!user) {
+      throw new NotFoundException('Email not found');
+    }
+
+    const otp = this.generateOTP();
+    const otpExpiry = new Date();
+    otpExpiry.setMinutes(otpExpiry.getMinutes() + 10); // OTP valid for 10 minutes
+
+    // Update user with OTP and expiry
+    await user.update({
+      otp,
+      otpExpiry,
+    });
+
+    // Send OTP via email
+    try {
+      await this.emailService.sendOTP(user.email, user.name, otp);
+    } catch (error) {
+      console.error('Failed to send OTP email:', error);
+      throw new Error('Failed to send OTP email');
+    }
+
+    return { message: 'OTP sent successfully' };
+  }
+
+  /**
+   * Verify OTP and login user
+   */
+  async verifyOTP(email: string, otp: string, ipAddress: string = '0.0.0.0') {
+    const user = await this.validateUser(email);
+
+    if (!user) {
+      throw new NotFoundException('Email not found');
+    }
+
+    if (!user.otp || !user.otpExpiry) {
+      throw new UnauthorizedException('No OTP found. Please request a new OTP.');
+    }
+
+    // Check if OTP has expired
+    if (new Date() > user.otpExpiry) {
+      throw new UnauthorizedException('OTP has expired. Please request a new OTP.');
+    }
+
+    // Verify OTP
+    if (user.otp !== otp) {
+      throw new UnauthorizedException('Invalid OTP');
+    }
+
+    // Clear OTP after successful verification
+    await user.update({
+      otp: null,
+      otpExpiry: null,
+    });
+
+    // Login user
+    return this.login(user, ipAddress);
+  }
+}
