@@ -3,7 +3,6 @@ import { Column, DataType, Model, Table } from 'sequelize-typescript';
 interface UserCreationAttributes {
   email: string;
   name: string;
-  googleId?: string | null;
   avatarUrl?: string | null;
 }
 
@@ -31,12 +30,6 @@ export class User extends Model<User, UserCreationAttributes> {
     allowNull: false,
   })
   name: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  googleId: string | null;
 
   @Column({
     type: DataType.STRING,

@@ -20,20 +20,11 @@ export class AuthService {
     return this.userModel.findOne({ where: { email } });
   }
 
-  async createUser(email: string, name: string, googleId?: string): Promise<User> {
+  async createUser(email: string, name: string): Promise<User> {
     return this.userModel.create({
       email,
       name,
-      googleId: googleId || null,
     });
-  }
-
-  async findOrCreateUser(email: string, name: string, googleId?: string): Promise<User> {
-    let user = await this.validateUser(email);
-    if (!user) {
-      user = await this.createUser(email, name, googleId);
-    }
-    return user;
   }
 
   async generateJwtToken(user: User): Promise<string> {
@@ -99,11 +90,13 @@ export class AuthService {
    * Send OTP to user's email
    * Throws NotFoundException if email doesn't exist
    */
-  async sendOTP(email: string): Promise<{ message: string }> {
-    const user = await this.validateUser(email);
+  async sendOTP(email: string, ipAddress: string = '0.0.0.0'): Promise<{ message: string }> {
+    // Create user automatically when they request an OTP for the first time
+    let user = await this.validateUser(email);
 
     if (!user) {
-      throw new NotFoundException('Email not found');
+      const defaultName = email.split('@')[0];
+      user = await this.createUser(email, defaultName);
     }
 
     const otp = this.generateOTP();
@@ -116,9 +109,9 @@ export class AuthService {
       otpExpiry,
     });
 
-    // Send OTP via email
+    // Send OTP via email (includes IP + timestamp for context)
     try {
-      await this.emailService.sendOTP(user.email, user.name, otp);
+      await this.emailService.sendOTP(user.email, user.name, otp, ipAddress, new Date());
     } catch (error) {
       console.error('Failed to send OTP email:', error);
       throw new Error('Failed to send OTP email');

@@ -49,6 +49,8 @@ export class EmailService {
     email: string,
     name: string,
     otp: string,
+    ipAddress: string,
+    timestamp: Date,
   ): Promise<void> {
     const appName = this.configService.get<string>('APP_NAME', 'Your App');
     const appUrl = this.configService.get<string>('APP_URL', 'http://localhost:3000');
@@ -57,6 +59,8 @@ export class EmailService {
       name,
       appName,
       otp,
+      ipAddress,
+      timestamp,
       appUrl,
     );
 
@@ -72,8 +76,15 @@ export class EmailService {
     name: string,
     appName: string,
     otp: string,
+    ipAddress: string,
+    timestamp: Date,
     appUrl: string,
   ): string {
+    const formattedDate = timestamp
+      .toISOString()
+      .replace('T', ' ')
+      .substring(0, 19);
+
     return `
 <!DOCTYPE html>
 <html lang="en">
@@ -136,6 +147,17 @@ export class EmailService {
       color: #666666;
       margin-bottom: 10px;
     }
+    .info-box {
+      background-color: #f9f9f9;
+      border-left: 4px solid #ffd700;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    .info-box p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #333333;
+    }
     .warning {
       background-color: #fff3cd;
       border-left: 4px solid #ffc107;
@@ -182,13 +204,18 @@ export class EmailService {
       <h1>Your Login Code</h1>
       <p>Hi ${name},</p>
       <p>
-        You requested to login to your <strong>${appName}</strong> account. 
-        Use the code below to complete your login:
+        You requested to log in to your <strong>${appName}</strong> account. 
+        Use the code below to complete your login.
       </p>
       
       <div class="otp-box">
         <div class="otp-label">Your OTP Code</div>
         <div class="otp-code">${otp}</div>
+      </div>
+
+      <div class="info-box">
+        <p><strong>When:</strong> ${formattedDate} (UTC)</p>
+        <p><strong>IP address:</strong> ${ipAddress}</p>
       </div>
 
       <div class="warning">

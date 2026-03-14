@@ -12,6 +12,9 @@ async function bootstrap() {
   // Set global prefix for routes
   app.setGlobalPrefix('api/v1');
 
+  // Enable CORS for all origins
+  app.enableCors();
+
   const config = new DocumentBuilder()
     .setTitle('EXETAT Mastery API')
     .setDescription('API for EXETAT Prep App - NestJS with Sequelize')
@@ -29,8 +32,12 @@ async function bootstrap() {
     )
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  const document = SwaggerModule.createDocument(app, config, {
+    ignoreGlobalPrefix: false,
+  });
+
+  // Serve Swagger UI at /api/v1/docs (matches the global prefix)
+  SwaggerModule.setup('api/v1/docs', app, document);
   
   await app.listen(process.env.PORT ?? 3000);
   console.log(`Server running on http://localhost:${process.env.PORT ?? 3000}`);

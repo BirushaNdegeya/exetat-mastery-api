@@ -4,12 +4,10 @@ import {
   Post,
   Body,
   Req,
-  Res,
   UseGuards,
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
-import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
@@ -21,7 +19,6 @@ import {
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
-import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @ApiTags('auth')
@@ -29,43 +26,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
-  @Get('google')
-  @UseGuards(GoogleAuthGuard)
-  @ApiOperation({ summary: 'Initiate Google OAuth authentication' })
-  @ApiResponse({ status: 302, description: 'Redirects to Google OAuth' })
-  async googleAuth(@Req() req) {
-    // Guard will redirect to Google
-  }
-
-  @Get('google/callback')
-  @UseGuards(GoogleAuthGuard)
-  @ApiOperation({ summary: 'Google OAuth callback endpoint' })
-  @ApiResponse({
-    status: 200,
-    description: 'Returns access token and user information',
-    schema: {
-      type: 'object',
-      properties: {
-        access_token: { type: 'string' },
-        user: {
-          type: 'object',
-          properties: {
-            id: { type: 'string' },
-            email: { type: 'string' },
-            name: { type: 'string' },
-            avatarUrl: { type: 'string', nullable: true },
-          },
-        },
-      },
-    },
-  })
-  async googleAuthRedirect(@Req() req, @Res() res: Response) {
-    // Extract IP address from request
-    const ipAddress = req.ip || req.connection.remoteAddress || '0.0.0.0';
-    const result = await this.authService.login(req.user, ipAddress);
-    // For API, return JSON. In production, you might want to redirect to frontend
-    return res.json(result);
-  }
+  // Google OAuth endpoints removed – using email + OTP only
 
   @Post('otp/send')
   @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 requests per minute
@@ -90,8 +51,9 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 404, description: 'Email not found' })
-  async sendOTP(@Body('email') email: string) {
-    return this.authService.sendOTP(email);
+  async sendOTP(@Body('email') email: string, @Req() req) {
+    const ipAddress = req.ip || req.connection?.remoteAddress || '0.0.0.0';
+    return this.authService.sendOTP(email, ipAddress);
   }
 
   @Post('otp/verify')
@@ -150,7 +112,6 @@ export class AuthController {
         id: { type: 'string' },
         email: { type: 'string' },
         name: { type: 'string' },
-        googleId: { type: 'string', nullable: true },
         avatarUrl: { type: 'string', nullable: true },
         createdAt: { type: 'string', format: 'date-time' },
         updatedAt: { type: 'string', format: 'date-time' },
