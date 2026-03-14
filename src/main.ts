@@ -9,9 +9,12 @@ async function bootstrap() {
   // Enable compression middleware
   app.use(compression());
 
+  // Set global prefix for routes
+  app.setGlobalPrefix('api/v1');
+
   const config = new DocumentBuilder()
-    .setTitle('NestJS Sequelize Starter API')
-    .setDescription('API documentation for NestJS Sequelize Starter')
+    .setTitle('EXETAT Mastery API')
+    .setDescription('API for EXETAT Prep App - NestJS with Sequelize')
     .setVersion('1.0')
     .addBearerAuth(
       {
@@ -26,9 +29,10 @@ async function bootstrap() {
     )
     .build();
 
-  app.setGlobalPrefix('api');
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
+  
   await app.listen(process.env.PORT ?? 3000);
+  console.log(`Server running on http://localhost:${process.env.PORT ?? 3000}`);
 }
 void bootstrap();

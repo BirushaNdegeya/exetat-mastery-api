@@ -386,4 +386,174 @@ export class EmailService {
 </html>
     `;
   }
+
+  async sendSetInvitation(
+    email: string,
+    inviterName: string,
+    setTitle: string,
+  ): Promise<void> {
+    const appName = this.configService.get<string>('APP_NAME', 'EXETAT Mastery');
+    const appUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:5173');
+
+    const htmlContent = this.getSetInvitationTemplate(
+      inviterName,
+      setTitle,
+      appName,
+      appUrl,
+    );
+
+    await this.transporter.sendMail({
+      from: `"${appName}" <${this.configService.get<string>('SMTP_USER')}>`,
+      to: email,
+      subject: `You're invited to join "${setTitle}" on ${appName}`,
+      html: htmlContent,
+    });
+  }
+
+  private getSetInvitationTemplate(
+    inviterName: string,
+    setTitle: string,
+    appName: string,
+    appUrl: string,
+  ): string {
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Invitation</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background-color: #1a1a1a;
+      padding: 20px;
+      text-align: center;
+    }
+    .content {
+      padding: 40px 30px;
+    }
+    h1 {
+      color: #1a1a1a;
+      font-size: 24px;
+      margin: 0 0 20px 0;
+      font-weight: 600;
+    }
+    p {
+      color: #333333;
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 0 0 15px 0;
+    }
+    .invitation-box {
+      background-color: #f9f9f9;
+      border-left: 4px solid #ffd700;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .invitation-box p {
+      margin: 5px 0;
+    }
+    .set-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin: 10px 0;
+    }
+    .inviter-name {
+      color: #ffd700;
+      font-weight: 600;
+    }
+    .button {
+      display: inline-block;
+      background-color: #ffd700;
+      color: #1a1a1a;
+      text-decoration: none;
+      padding: 12px 30px;
+      border-radius: 4px;
+      font-weight: 600;
+      margin: 20px 0;
+      font-size: 16px;
+    }
+    .button:hover {
+      background-color: #ffed4e;
+    }
+    .help-text {
+      font-size: 14px;
+      color: #666666;
+      margin-top: 20px;
+    }
+    .help-text a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    .footer {
+      background-color: #f9f9f9;
+      padding: 30px;
+      text-align: center;
+      border-top: 1px solid #e0e0e0;
+    }
+    .footer-text {
+      color: #ffd700;
+      font-size: 14px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <!-- Logo or branding here -->
+    </div>
+    <div class="content">
+      <h1>You're Invited!</h1>
+      <p>
+        <span class="inviter-name">${inviterName}</span> has invited you to join a quiz set on <strong>${appName}</strong>.
+      </p>
+      
+      <div class="invitation-box">
+        <p style="color: #666; margin-bottom: 10px;">Quiz Set</p>
+        <div class="set-title">"${setTitle}"</div>
+        <p style="color: #999; font-size: 14px; margin-top: 10px;">
+          Collaborate and practice together!
+        </p>
+      </div>
+
+      <p>
+        Click the button below to view and accept the invitation:
+      </p>
+
+      <a href="${appUrl}/invitations" class="button">View Invitation</a>
+
+      <p class="help-text">
+        Don't have an account yet? No problem! 
+        <a href="${appUrl}/signup">Sign up</a> to get started.
+      </p>
+    </div>
+    
+    <div class="footer">
+      <p class="footer-text">${appName} · Learn Together</p>
+      <p style="color: #999; font-size: 12px; margin-top: 10px;">
+        This is an automated message, please do not reply.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+    `;
+  }
 }

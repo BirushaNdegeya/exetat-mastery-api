@@ -8,7 +8,31 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { EmailModule } from './email/email.module';
+import { ProfilesModule } from './profiles/profiles.module';
+import { SectionsModule } from './sections/sections.module';
+import { SubjectsModule } from './subjects/subjects.module';
+import { QuestionsModule } from './questions/questions.module';
+import { ProgressModule } from './progress/progress.module';
+import { StreaksModule } from './streaks/streaks.module';
+import { LessonsModule } from './lessons/lessons.module';
+import { CustomSetsModule } from './custom-sets/custom-sets.module';
+import { InvitationsModule } from './invitations/invitations.module';
+import { UsersModule } from './users/users.module';
+import { AdminModule } from './admin/admin.module';
+import { SharedQuizModule } from './shared-quiz/shared-quiz.module';
 import { User } from './models/user.model';
+import { Profile } from './models/profile.model';
+import { UserRole } from './models/user-role.model';
+import { Otp } from './models/otp.model';
+import { Section } from './models/section.model';
+import { Subject } from './models/subject.model';
+import { Question } from './models/question.model';
+import { UserProgress } from './models/user-progress.model';
+import { UserStreak } from './models/user-streak.model';
+import { UserLesson } from './models/user-lesson.model';
+import { CustomQuestionSet } from './models/custom-question-set.model';
+import { CustomQuestion } from './models/custom-question.model';
+import { Invitation } from './models/invitation.model';
 
 @Module({
   imports: [
@@ -32,19 +56,45 @@ import { User } from './models/user.model';
         dialect: 'postgres',
         host: configService.get<string>('DB_HOST'),
         port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_DATABASE'),
+        username: configService.get<string>('DB_USER'),
+        password: configService.get<string>('DB_PASS'),
+        database: configService.get<string>('DB_NAME'),
         autoLoadModels: true,
         synchronize: true,
         logging: configService.get<string>('NODE_ENV') === 'development' ? console.log : false,
       }),
       inject: [ConfigService],
     }),
-    SequelizeModule.forFeature([User]),
+    SequelizeModule.forFeature([
+      User,
+      Profile,
+      UserRole,
+      Otp,
+      Section,
+      Subject,
+      Question,
+      UserProgress,
+      UserStreak,
+      UserLesson,
+      CustomQuestionSet,
+      CustomQuestion,
+      Invitation,
+    ]),
     EmailModule,
     CloudinaryModule,
     AuthModule,
+    ProfilesModule,
+    SectionsModule,
+    SubjectsModule,
+    QuestionsModule,
+    ProgressModule,
+    StreaksModule,
+    LessonsModule,
+    CustomSetsModule,
+    InvitationsModule,
+    UsersModule,
+    AdminModule,
+    SharedQuizModule,
   ],
   controllers: [AppController],
   providers: [
