@@ -59,6 +59,12 @@ import { Invitation } from './models/invitation.model';
         username: configService.get<string>('DB_USER'),
         password: configService.get<string>('DB_PASS'),
         database: configService.get<string>('DB_NAME'),
+        dialectOptions: {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false,
+          },
+        },
         autoLoadModels: true,
         synchronize: true,
         logging: configService.get<string>('NODE_ENV') === 'development' ? console.log : false,
