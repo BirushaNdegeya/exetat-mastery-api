@@ -23,31 +23,31 @@ export class User extends Model<User, UserCreationAttributes> {
     allowNull: false,
     unique: true,
   })
-  email: string;
+  declare email: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  name: string;
+  declare name: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  avatarUrl: string | null;
+  declare avatarUrl: string | null;
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  otp: string | null;
+  declare otp: string | null;
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  otpExpiry: Date | null;
+  declare otpExpiry: Date | null;
 
   declare createdAt: Date;
 

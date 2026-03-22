@@ -24,12 +24,12 @@ export class SharedQuizService {
     });
 
     if (!set) {
-      throw new NotFoundException('Quiz not found');
+      throw new NotFoundException('Quiz introuvable');
     }
 
     const user = await this.userModel.findByPk(userId);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Utilisateur introuvable');
     }
 
     // Check if user is the creator
@@ -55,7 +55,7 @@ export class SharedQuizService {
 
     if (!invitation) {
       throw new ForbiddenException(
-        'You do not have access to this quiz. Only the creator or invited users can access it.',
+        "Vous n'avez pas accès à ce quiz. Seul le créateur ou les utilisateurs invités peuvent y accéder.",
       );
     }
 

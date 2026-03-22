@@ -25,7 +25,7 @@ export class CustomSetsService {
       include: [CustomQuestion, User],
     });
     if (!set) {
-      throw new NotFoundException('Custom set not found');
+      throw new NotFoundException('Ensemble personnalisé introuvable');
     }
     return set;
   }
@@ -54,7 +54,7 @@ export class CustomSetsService {
   ): Promise<CustomQuestionSet> {
     const set = await this.getCustomSetById(id);
     if (set.creator_id !== userId) {
-      throw new ForbiddenException('You can only update your own sets');
+      throw new ForbiddenException('Vous ne pouvez modifier que vos propres ensembles');
     }
     await set.update(data);
     return set;
@@ -63,7 +63,7 @@ export class CustomSetsService {
   async deleteCustomSet(userId: string, id: string): Promise<void> {
     const set = await this.getCustomSetById(id);
     if (set.creator_id !== userId) {
-      throw new ForbiddenException('You can only delete your own sets');
+      throw new ForbiddenException('Vous ne pouvez supprimer que vos propres ensembles');
     }
     await set.destroy();
   }

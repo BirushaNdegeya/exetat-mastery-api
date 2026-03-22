@@ -40,7 +40,7 @@ export class EmailService {
     await this.transporter.sendMail({
       from: `"${appName}" <${this.configService.get<string>('SMTP_FROM')}>`,
       to: email,
-      subject: 'Did You Login From a New Device or Location?',
+      subject: "Connexion détectée : nouvel appareil ou nouvel emplacement ?",
       html: htmlContent,
     });
   }
@@ -67,7 +67,7 @@ export class EmailService {
     await this.transporter.sendMail({
       from: `"${appName}" <${this.configService.get<string>('SMTP_FROM')}>`,
       to: email,
-      subject: 'Your Login OTP Code',
+      subject: 'Votre code OTP de connexion',
       html: htmlContent,
     });
   }
@@ -91,7 +91,7 @@ export class EmailService {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your OTP Code</title>
+  <title>Votre code OTP</title>
   <style>
     body {
       margin: 0;
@@ -201,39 +201,39 @@ export class EmailService {
       <!-- You can add a logo here if needed -->
     </div>
     <div class="content">
-      <h1>Your Login Code</h1>
-      <p>Hi ${name},</p>
+      <h1>Votre code de connexion</h1>
+      <p>Bonjour ${name},</p>
       <p>
-        You requested to log in to your <strong>${appName}</strong> account. 
-        Use the code below to complete your login.
+        Vous avez demandé à vous connecter à votre compte <strong>${appName}</strong>.
+        Utilisez le code ci-dessous pour finaliser votre connexion.
       </p>
       
       <div class="otp-box">
-        <div class="otp-label">Your OTP Code</div>
+        <div class="otp-label">Votre code OTP</div>
         <div class="otp-code">${otp}</div>
       </div>
 
       <div class="info-box">
-        <p><strong>When:</strong> ${formattedDate} (UTC)</p>
-        <p><strong>IP address:</strong> ${ipAddress}</p>
+        <p><strong>Date :</strong> ${formattedDate} (UTC)</p>
+        <p><strong>Adresse IP :</strong> ${ipAddress}</p>
       </div>
 
       <div class="warning">
-        ⚠️ This code will expire in 10 minutes. Do not share this code with anyone.
+        ⚠️ Ce code expire dans 10 minutes. Ne le partagez avec personne.
       </div>
 
       <p class="help-text">
-        If you didn't request this code, please ignore this email or 
-        <a href="${appUrl}/support">contact support</a> if you have concerns.
+        Si vous n'êtes pas à l'origine de cette demande, ignorez cet email ou
+        <a href="${appUrl}/support">contactez le support</a> en cas de doute.
       </p>
 
       <p class="disclaimer">
-        This is an automated message, please do not reply.
+        Ceci est un message automatique, merci de ne pas répondre.
       </p>
     </div>
     
     <div class="footer">
-      <p class="footer-text">Stay connected!</p>
+      <p class="footer-text">Restez connecté(e) !</p>
     </div>
   </div>
 </body>
@@ -257,7 +257,7 @@ export class EmailService {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Notification</title>
+  <title>Notification de connexion</title>
   <style>
     body {
       margin: 0;
@@ -371,33 +371,33 @@ export class EmailService {
       <!-- You can add a logo here if needed -->
     </div>
     <div class="content">
-      <h1>Did You Login From a New Device or Location?</h1>
+      <h1>Connexion depuis un nouvel appareil ou emplacement ?</h1>
       <p>
-        We noticed your <span class="highlight">${appName}</span> account 
-        <a href="mailto:${email}" style="color: #0066cc; text-decoration: none;">${email}</a> 
-        was accessed from a new IP address.
+        Nous avons détecté une connexion à votre compte <span class="highlight">${appName}</span>
+        <a href="mailto:${email}" style="color: #0066cc; text-decoration: none;">${email}</a>
+        depuis une nouvelle adresse IP.
       </p>
       
       <div class="info-box">
-        <p><span class="info-label">When</span> : ${formattedDate}</p>
-        <p><span class="info-label">IP Address</span> : ${ipAddress}</p>
+        <p><span class="info-label">Date</span> : ${formattedDate}</p>
+        <p><span class="info-label">Adresse IP</span> : ${ipAddress}</p>
       </div>
 
-      <a href="${appUrl}" class="button">Visit Your Account</a>
+      <a href="${appUrl}" class="button">Accéder à votre compte</a>
 
       <p class="help-text">
-        Don't recognize this activity? Please 
-        <a href="${appUrl}/reset-password">reset your password</a> and contact 
-        <a href="${appUrl}/support">customer support</a> immediately.
+        Vous ne reconnaissez pas cette activité ?
+        <a href="${appUrl}/reset-password">Réinitialisez votre mot de passe</a> et contactez
+        <a href="${appUrl}/support">le support</a> immédiatement.
       </p>
 
       <p class="disclaimer">
-        This is an automated message, please do not reply.
+        Ceci est un message automatique, merci de ne pas répondre.
       </p>
     </div>
     
     <div class="footer">
-      <p class="footer-text">Stay connected!</p>
+      <p class="footer-text">Restez connecté(e) !</p>
       <div class="social-links">
         <a href="#" title="X (Twitter)">𝕏</a>
         <a href="#" title="Telegram">✈</a>
@@ -432,7 +432,7 @@ export class EmailService {
     await this.transporter.sendMail({
       from: `"${appName}" <${this.configService.get<string>('SMTP_USER')}>`,
       to: email,
-      subject: `You're invited to join "${setTitle}" on ${appName}`,
+      subject: `Invitation : rejoindre « ${setTitle} » sur ${appName}`,
       html: htmlContent,
     });
   }
@@ -449,7 +449,7 @@ export class EmailService {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz Invitation</title>
+  <title>Invitation au quiz</title>
   <style>
     body {
       margin: 0;
@@ -547,35 +547,35 @@ export class EmailService {
       <!-- Logo or branding here -->
     </div>
     <div class="content">
-      <h1>You're Invited!</h1>
+      <h1>Vous êtes invité(e) !</h1>
       <p>
-        <span class="inviter-name">${inviterName}</span> has invited you to join a quiz set on <strong>${appName}</strong>.
+        <span class="inviter-name">${inviterName}</span> vous a invité(e) à rejoindre un ensemble de quiz sur <strong>${appName}</strong>.
       </p>
       
       <div class="invitation-box">
-        <p style="color: #666; margin-bottom: 10px;">Quiz Set</p>
+        <p style="color: #666; margin-bottom: 10px;">Ensemble de quiz</p>
         <div class="set-title">"${setTitle}"</div>
         <p style="color: #999; font-size: 14px; margin-top: 10px;">
-          Collaborate and practice together!
+          Entraînez-vous et progressez ensemble !
         </p>
       </div>
 
       <p>
-        Click the button below to view and accept the invitation:
+        Cliquez sur le bouton ci-dessous pour voir et accepter l'invitation :
       </p>
 
-      <a href="${appUrl}/invitations" class="button">View Invitation</a>
+      <a href="${appUrl}/invitations" class="button">Voir l'invitation</a>
 
       <p class="help-text">
-        Don't have an account yet? No problem! 
-        <a href="${appUrl}/signup">Sign up</a> to get started.
+        Vous n'avez pas encore de compte ? Pas de souci !
+        <a href="${appUrl}/signup">Inscrivez-vous</a> pour commencer.
       </p>
     </div>
     
     <div class="footer">
-      <p class="footer-text">${appName} · Learn Together</p>
+      <p class="footer-text">${appName} · Apprendre ensemble</p>
       <p style="color: #999; font-size: 12px; margin-top: 10px;">
-        This is an automated message, please do not reply.
+        Ceci est un message automatique, merci de ne pas répondre.
       </p>
     </div>
   </div>

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from '../models/user.model';
@@ -62,11 +62,11 @@ export class AuthService {
   async updateAvatar(userId: string, file: Express.Multer.File) {
     const user = await this.userModel.findByPk(userId);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Utilisateur introuvable');
     }
 
     if (!file || !file.buffer) {
-      throw new UnauthorizedException('No file provided');
+      throw new UnauthorizedException('Aucun fichier fourni');
     }
 
     const uploadResult = await this.cloudinaryService.uploadImage(file.buffer);
@@ -74,7 +74,7 @@ export class AuthService {
     await user.update({ avatarUrl: uploadResult.secure_url });
 
     return {
-      message: 'Avatar updated successfully',
+      message: 'Avatar mis à jour avec succès',
       avatarUrl: user.avatarUrl,
     };
   }
@@ -91,6 +91,10 @@ export class AuthService {
    * Throws NotFoundException if email doesn't exist
    */
   async sendOTP(email: string, ipAddress: string = '0.0.0.0'): Promise<{ message: string }> {
+    if (!email || !email.trim()) {
+      throw new BadRequestException("L'email est requis");
+    }
+
     // Create user automatically when they request an OTP for the first time
     let user = await this.validateUser(email);
 
@@ -114,10 +118,10 @@ export class AuthService {
       await this.emailService.sendOTP(user.email, user.name, otp, ipAddress, new Date());
     } catch (error) {
       console.error('Failed to send OTP email:', error);
-      throw new Error('Failed to send OTP email');
+      throw new Error("Échec de l'envoi de l'OTP par email");
     }
 
-    return { message: 'OTP sent successfully' };
+    return { message: 'OTP envoyé avec succès' };
   }
 
   /**
@@ -127,21 +131,21 @@ export class AuthService {
     const user = await this.validateUser(email);
 
     if (!user) {
-      throw new NotFoundException('Email not found');
+      throw new NotFoundException('Email introuvable');
     }
 
     if (!user.otp || !user.otpExpiry) {
-      throw new UnauthorizedException('No OTP found. Please request a new OTP.');
+      throw new UnauthorizedException("Aucun OTP trouvé. Veuillez demander un nouveau code.");
     }
 
     // Check if OTP has expired
     if (new Date() > user.otpExpiry) {
-      throw new UnauthorizedException('OTP has expired. Please request a new OTP.');
+      throw new UnauthorizedException("Le code OTP a expiré. Veuillez demander un nouveau code.");
     }
 
     // Verify OTP
     if (user.otp !== otp) {
-      throw new UnauthorizedException('Invalid OTP');
+      throw new UnauthorizedException('Code OTP invalide');
     }
 
     // Clear OTP after successful verification

@@ -21,7 +21,7 @@ export class CustomQuestionsService {
   async getCustomQuestionById(id: string): Promise<CustomQuestion> {
     const question = await this.customQuestionModel.findByPk(id);
     if (!question) {
-      throw new NotFoundException('Custom question not found');
+      throw new NotFoundException('Question personnalisée introuvable');
     }
     return question;
   }
@@ -39,7 +39,7 @@ export class CustomQuestionsService {
     // Verify user owns the set
     const set = await this.customSetModel.findByPk(setId);
     if (!set || set.creator_id !== userId) {
-      throw new ForbiddenException('You can only add questions to your own sets');
+      throw new ForbiddenException("Vous ne pouvez ajouter des questions qu'à vos propres ensembles");
     }
 
     return this.customQuestionModel.create({
@@ -65,12 +65,12 @@ export class CustomQuestionsService {
     // Verify user owns the set
     const set = await this.customSetModel.findByPk(setId);
     if (!set || set.creator_id !== userId) {
-      throw new ForbiddenException('You can only update questions in your own sets');
+      throw new ForbiddenException("Vous ne pouvez modifier des questions que dans vos propres ensembles");
     }
 
     const question = await this.getCustomQuestionById(id);
     if (question.set_id !== setId) {
-      throw new ForbiddenException('Question does not belong to this set');
+      throw new ForbiddenException("Cette question n'appartient pas à cet ensemble");
     }
 
     await question.update(data);
@@ -81,12 +81,12 @@ export class CustomQuestionsService {
     // Verify user owns the set
     const set = await this.customSetModel.findByPk(setId);
     if (!set || set.creator_id !== userId) {
-      throw new ForbiddenException('You can only delete questions from your own sets');
+      throw new ForbiddenException("Vous ne pouvez supprimer des questions que de vos propres ensembles");
     }
 
     const question = await this.getCustomQuestionById(id);
     if (question.set_id !== setId) {
-      throw new ForbiddenException('Question does not belong to this set');
+      throw new ForbiddenException("Cette question n'appartient pas à cet ensemble");
     }
 
     await question.destroy();

@@ -24,7 +24,7 @@ export class RolesGuard implements CanActivate {
 
     const { user } = context.switchToHttp().getRequest();
     if (!user) {
-      throw new ForbiddenException('User not authenticated');
+      throw new ForbiddenException("Utilisateur non authentifié");
     }
 
     const userRoles = await this.userRoleModel.findAll({
@@ -34,7 +34,7 @@ export class RolesGuard implements CanActivate {
     const hasRole = userRoles.some((role) => requiredRoles.includes(role.role));
     if (!hasRole) {
       throw new ForbiddenException(
-        `User must have one of the following roles: ${requiredRoles.join(', ')}`,
+        `Vous devez avoir l'un des rôles suivants : ${requiredRoles.join(', ')}`,
       );
     }
 

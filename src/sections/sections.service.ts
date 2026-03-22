@@ -20,7 +20,7 @@ export class SectionsService {
   async getSectionById(id: string): Promise<Section> {
     const section = await this.sectionModel.findByPk(id);
     if (!section) {
-      throw new NotFoundException('Section not found');
+      throw new NotFoundException('Section introuvable');
     }
     return section;
   }

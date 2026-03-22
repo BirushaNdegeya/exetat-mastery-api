@@ -17,7 +17,7 @@ export class ProfilesService {
     });
 
     if (!profile) {
-      throw new NotFoundException('Profile not found');
+      throw new NotFoundException('Profil introuvable');
     }
 
     return profile;
@@ -30,7 +30,7 @@ export class ProfilesService {
     });
 
     if (!profile) {
-      throw new NotFoundException('Profile not found');
+      throw new NotFoundException('Profil introuvable');
     }
 
     await profile.update(data);

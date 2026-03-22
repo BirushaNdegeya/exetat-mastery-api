@@ -48,7 +48,7 @@ export class QuestionsService {
       include: [Subject],
     });
     if (!question) {
-      throw new NotFoundException('Question not found');
+      throw new NotFoundException('Question introuvable');
     }
     return question;
   }

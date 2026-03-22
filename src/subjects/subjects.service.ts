@@ -24,7 +24,7 @@ export class SubjectsService {
       include: [Section],
     });
     if (!subject) {
-      throw new NotFoundException('Subject not found');
+      throw new NotFoundException('Matière introuvable');
     }
     return subject;
   }

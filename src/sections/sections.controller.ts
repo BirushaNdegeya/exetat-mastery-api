@@ -8,6 +8,14 @@ import {
   Body,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { SectionsService } from './sections.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -15,16 +23,45 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRoleEnum } from '../models/user-role.model';
 import { CreateSectionDto } from './dto/create-section.dto';
 
+@ApiTags('sections')
 @Controller('sections')
 export class SectionsController {
   constructor(private readonly sectionsService: SectionsService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all sections' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns all sections',
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', format: 'uuid' },
+          name: { type: 'string', example: 'Mathematics' },
+          createdAt: { type: 'string', format: 'date-time' },
+          updatedAt: { type: 'string', format: 'date-time' },
+        },
+      },
+    },
+  })
   async getAllSections() {
     return this.sectionsService.getAllSections();
   }
 
   @Get('count')
+  @ApiOperation({ summary: 'Get sections count' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns total number of sections',
+    schema: {
+      type: 'object',
+      properties: {
+        count: { type: 'number', example: 12 },
+      },
+    },
+  })
   async getSectionCount() {
     return { count: await this.sectionsService.getSectionCount() };
   }
@@ -32,6 +69,24 @@ export class SectionsController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Create a section' })
+  @ApiBody({ type: CreateSectionDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Section created successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', format: 'uuid' },
+        name: { type: 'string', example: 'Mathematics' },
+        createdAt: { type: 'string', format: 'date-time' },
+        updatedAt: { type: 'string', format: 'date-time' },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
   async createSection(@Body() createSectionDto: CreateSectionDto) {
     return this.sectionsService.createSection(createSectionDto);
   }
@@ -39,6 +94,30 @@ export class SectionsController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Update a section' })
+  @ApiParam({
+    name: 'id',
+    description: 'Section ID',
+    schema: { type: 'string', format: 'uuid' },
+  })
+  @ApiBody({ type: CreateSectionDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Section updated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', format: 'uuid' },
+        name: { type: 'string', example: 'Mathematics' },
+        createdAt: { type: 'string', format: 'date-time' },
+        updatedAt: { type: 'string', format: 'date-time' },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Section not found' })
   async updateSection(
     @Param('id') id: string,
     @Body() updateSectionDto: CreateSectionDto,
@@ -49,6 +128,29 @@ export class SectionsController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Delete a section' })
+  @ApiParam({
+    name: 'id',
+    description: 'Section ID',
+    schema: { type: 'string', format: 'uuid' },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Section deleted successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Section deleted successfully',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Section not found' })
   async deleteSection(@Param('id') id: string) {
     await this.sectionsService.deleteSection(id);
     return { message: 'Section deleted successfully' };
