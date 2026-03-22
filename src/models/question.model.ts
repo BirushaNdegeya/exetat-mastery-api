@@ -1,5 +1,5 @@
 import { Column, DataType, Model, Table, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
-import { Subject } from './subject.model';
+import { TestYear } from './test-year.model';
 import { UserProgress } from './user-progress.model';
 
 interface QuestionCreationAttributes {
@@ -7,8 +7,7 @@ interface QuestionCreationAttributes {
   options: string[];
   correct_answer: string;
   explanation: string;
-  subject_id: string;
-  year: number;
+  test_year_id: string;
   passage?: string | null;
 }
 
@@ -48,21 +47,15 @@ export class Question extends Model<Question, QuestionCreationAttributes> {
   })
   explanation: string;
 
-  @ForeignKey(() => Subject)
+  @ForeignKey(() => TestYear)
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  subject_id: string;
+  test_year_id: string;
 
-  @BelongsTo(() => Subject)
-  subject: Subject;
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  year: number;
+  @BelongsTo(() => TestYear)
+  testYear: TestYear;
 
   @Column({
     type: DataType.TEXT,

@@ -1,6 +1,6 @@
 import { Column, DataType, Model, Table, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
 import { Section } from './section.model';
-import { Question } from './question.model';
+import { TestYear } from './test-year.model';
 
 interface SubjectCreationAttributes {
   name: string;
@@ -49,8 +49,8 @@ export class Subject extends Model<Subject, SubjectCreationAttributes> {
   @BelongsTo(() => Section)
   section: Section;
 
-  @HasMany(() => Question)
-  questions: Question[];
+  @HasMany(() => TestYear)
+  testYears: TestYear[];
 
   declare createdAt: Date;
   declare updatedAt: Date;

@@ -20,12 +20,15 @@ import { InvitationsModule } from './invitations/invitations.module';
 import { UsersModule } from './users/users.module';
 import { AdminModule } from './admin/admin.module';
 import { SharedQuizModule } from './shared-quiz/shared-quiz.module';
+import { TestYearsModule } from './test-years/test-years.module';
+import { SchemaMigrationService } from './database/schema-migration.service';
 import { User } from './models/user.model';
 import { Profile } from './models/profile.model';
 import { UserRole } from './models/user-role.model';
 import { Otp } from './models/otp.model';
 import { Section } from './models/section.model';
 import { Subject } from './models/subject.model';
+import { TestYear } from './models/test-year.model';
 import { Question } from './models/question.model';
 import { UserProgress } from './models/user-progress.model';
 import { UserStreak } from './models/user-streak.model';
@@ -78,6 +81,7 @@ import { Invitation } from './models/invitation.model';
       Otp,
       Section,
       Subject,
+      TestYear,
       Question,
       UserProgress,
       UserStreak,
@@ -92,6 +96,7 @@ import { Invitation } from './models/invitation.model';
     ProfilesModule,
     SectionsModule,
     SubjectsModule,
+    TestYearsModule,
     QuestionsModule,
     ProgressModule,
     StreaksModule,
@@ -109,6 +114,7 @@ import { Invitation } from './models/invitation.model';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    SchemaMigrationService,
   ],
 })
 export class AppModule { }

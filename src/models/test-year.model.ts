@@ -1,0 +1,50 @@
+import { Column, DataType, Model, Table, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
+import { Subject } from './subject.model';
+import { Question } from './question.model';
+
+interface TestYearCreationAttributes {
+  year: number;
+  subject_id: string;
+}
+
+@Table({
+  tableName: 'test_year',
+  timestamps: true,
+  indexes: [
+    {
+      unique: true,
+      fields: ['subject_id', 'year'],
+      name: 'test_year_subject_year_unique',
+    },
+  ],
+})
+export class TestYear extends Model<TestYear, TestYearCreationAttributes> {
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+    primaryKey: true,
+  })
+  declare id: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  year: number;
+
+  @ForeignKey(() => Subject)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  subject_id: string;
+
+  @BelongsTo(() => Subject)
+  subject: Subject;
+
+  @HasMany(() => Question)
+  questions: Question[];
+
+  declare createdAt: Date;
+  declare updatedAt: Date;
+}

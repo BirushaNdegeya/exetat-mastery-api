@@ -3,35 +3,66 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Subject } from '../models/subject.model';
 import { Question } from '../models/question.model';
 import { Section } from '../models/section.model';
+import { TestYear } from '../models/test-year.model';
 
 @Injectable()
 export class SubjectsService {
   constructor(
     @InjectModel(Subject)
     private subjectModel: typeof Subject,
+    @InjectModel(TestYear)
+    private testYearModel: typeof TestYear,
   ) {}
 
-  async getAllSubjects(sectionId?: string): Promise<Subject[]> {
+  async getAllSubjects(sectionId?: string): Promise<Array<Subject & { year_count?: number; question_count?: number }>> {
     const where = sectionId ? { section_id: sectionId } : {};
-    return this.subjectModel.findAll({
+    const subjects = await this.subjectModel.findAll({
       where,
-      include: [Section],
+      include: [Section, TestYear],
+      order: [['createdAt', 'DESC']],
     });
+
+    return Promise.all(
+      subjects.map(async (subject) => {
+        const jsonSubject = subject.toJSON() as Subject & { testYears?: TestYear[]; year_count?: number; question_count?: number };
+        jsonSubject.year_count = jsonSubject.testYears?.length ?? 0;
+        jsonSubject.question_count = await this.getQuestionCount(subject.id);
+        const { testYears, ...subjectWithoutYears } = jsonSubject as Subject & {
+          testYears?: TestYear[];
+          year_count?: number;
+          question_count?: number;
+        };
+        void testYears;
+        return subjectWithoutYears as Subject & { year_count?: number; question_count?: number };
+      }),
+    );
   }
 
-  async getSubjectById(id: string): Promise<Subject> {
-    const subject = await this.subjectModel.findByPk(id, {
-      include: [Section],
-    });
-    if (!subject) {
-      throw new NotFoundException('Matière introuvable');
-    }
-    return subject;
+  async getSubjectById(id: string): Promise<Subject & { year_count?: number; question_count?: number }> {
+    const subject = await this.findSubjectEntityById(id);
+
+    const jsonSubject = subject.toJSON() as Subject & { testYears?: TestYear[]; year_count?: number; question_count?: number };
+    jsonSubject.year_count = jsonSubject.testYears?.length ?? 0;
+    jsonSubject.question_count = await this.getQuestionCount(subject.id);
+    const { testYears, ...subjectWithoutYears } = jsonSubject as Subject & {
+      testYears?: TestYear[];
+      year_count?: number;
+      question_count?: number;
+    };
+    void testYears;
+
+    return subjectWithoutYears as Subject & { year_count?: number; question_count?: number };
   }
 
   async getQuestionCount(subjectId: string): Promise<number> {
     return Question.count({
-      where: { subject_id: subjectId },
+      include: [
+        {
+          model: TestYear,
+          where: { subject_id: subjectId },
+          attributes: [],
+        },
+      ],
     });
   }
 
@@ -53,13 +84,37 @@ export class SubjectsService {
       section_id?: string | null;
     },
   ): Promise<Subject> {
-    const subject = await this.getSubjectById(id);
+    const subject = await this.findSubjectEntityById(id);
     await subject.update(data);
     return subject;
   }
 
   async deleteSubject(id: string): Promise<void> {
-    const subject = await this.getSubjectById(id);
+    const subject = await this.findSubjectEntityById(id);
+    const testYears = await this.testYearModel.findAll({
+      where: { subject_id: id },
+      include: [Question],
+    });
+
+    for (const testYear of testYears) {
+      await Question.destroy({
+        where: { test_year_id: testYear.id },
+      });
+      await testYear.destroy();
+    }
+
     await subject.destroy();
+  }
+
+  private async findSubjectEntityById(id: string): Promise<Subject> {
+    const subject = await this.subjectModel.findByPk(id, {
+      include: [Section, TestYear],
+    });
+
+    if (!subject) {
+      throw new NotFoundException('Matière introuvable');
+    }
+
+    return subject;
   }
 }
