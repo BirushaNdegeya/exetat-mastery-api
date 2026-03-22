@@ -1,11 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/sequelize';
 import { UserRole, UserRoleEnum } from '../models/user-role.model';
 import { User } from '../models/user.model';
+import { isConfiguredAdminEmail } from '../auth/utils/admin-access.util';
 
 @Injectable()
 export class UsersService {
   constructor(
+    private configService: ConfigService,
     @InjectModel(UserRole)
     private userRoleModel: typeof UserRole,
     @InjectModel(User)
@@ -22,7 +25,15 @@ export class UsersService {
     const adminRole = await this.userRoleModel.findOne({
       where: { userId, role: UserRoleEnum.ADMIN },
     });
-    return !!adminRole;
+    if (adminRole) {
+      return true;
+    }
+
+    const user = await this.userModel.findByPk(userId);
+    return isConfiguredAdminEmail(
+      user?.email,
+      this.configService.get<string>('ADMIN_EMAILS'),
+    );
   }
 
   async getAllAdmins(): Promise<any[]> {

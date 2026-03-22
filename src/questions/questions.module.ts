@@ -5,9 +5,10 @@ import { QuestionsController } from './questions.controller';
 import { Question } from '../models/question.model';
 import { Subject } from '../models/subject.model';
 import { UserRole } from '../models/user-role.model';
+import { User } from '../models/user.model';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Question, Subject, UserRole])],
+  imports: [SequelizeModule.forFeature([Question, Subject, UserRole, User])],
   providers: [QuestionsService],
   controllers: [QuestionsController],
   exports: [QuestionsService],
