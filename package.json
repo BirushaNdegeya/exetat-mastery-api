@@ -26,7 +26,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky",
-    "grant:admin": "ts-node -r tsconfig-paths/register scripts/grant-admin.ts"
+    "grant:admin": "ts-node -r tsconfig-paths/register scripts/grant-admin.ts",
+    "seed:techniques-sociales": "bash scripts/seed-techniques-sociales.sh"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

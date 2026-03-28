@@ -452,7 +452,39 @@ npm run lint
 
 # Format code
 npm run format
+
+# Load Techniques Sociales test data
+npm run seed:techniques-sociales
 ```
+
+### Seed Test Data
+
+To load ready-made test data for the `TECHNIQUES SOCIALES` section, including:
+
+- `CULTURE GENERALE`
+- `SCIENCES`
+- `LANGUES`
+- `COURS D'OPTIONS`
+
+with multiple year blocks and many questions, run:
+
+```bash
+npm run seed:techniques-sociales
+```
+
+What this seed does:
+
+- ensures the year blocks exist
+- removes older seed rows created by the test seed
+- inserts fresh test questions for the 4 branches
+- for `LANGUES`, creates separate passage groups per year:
+  - `francais` passage with its own related questions
+  - `anglais` passage with its own related questions
+
+Seed files:
+
+- [scripts/seed-techniques-sociales.sh](/home/birusha/Documents/work/exetat/exetat-mastery-api/scripts/seed-techniques-sociales.sh)
+- [scripts/seed-techniques-sociales.sql](/home/birusha/Documents/work/exetat/exetat-mastery-api/scripts/seed-techniques-sociales.sql)
 
 ### Adding New Features
 
