@@ -4,8 +4,14 @@ import { UserProgress } from './user-progress.model';
 
 interface QuestionCreationAttributes {
   question_text: string;
-  options: string[];
-  correct_answer: string;
+  options: {
+    option1: string;
+    option2: string;
+    option3: string;
+    option4: string;
+    option5: string;
+  };
+  correctAnswer: number;
   explanation: string;
   test_year_id: string;
   passage?: string | null;
@@ -33,13 +39,19 @@ export class Question extends Model<Question, QuestionCreationAttributes> {
     type: DataType.JSON,
     allowNull: false,
   })
-  options: string[];
+  options: {
+    option1: string;
+    option2: string;
+    option3: string;
+    option4: string;
+    option5: string;
+  };
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  correct_answer: string;
+  correctAnswer: number;
 
   @Column({
     type: DataType.TEXT,

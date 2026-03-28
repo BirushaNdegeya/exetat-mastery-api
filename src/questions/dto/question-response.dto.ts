@@ -13,18 +13,31 @@ export class QuestionResponseDto {
   question_text: string;
 
   @ApiProperty({
-    type: [String],
-    example: ['Kinshasa', 'Lubumbashi', 'Goma', 'Matadi'],
+    description: '5 fixed answer options labeled 1-5',
+    example: {
+      option1: 'Kinshasa (1)',
+      option2: 'Lubumbashi (2)',
+      option3: 'Goma (3)',
+      option4: 'Matadi (4)',
+      option5: 'Bukavu (5)'
+    },
   })
-  options: string[];
+  options: {
+    option1: string;
+    option2: string;
+    option3: string;
+    option4: string;
+    option5: string;
+  };
 
   @ApiProperty({
-    example: 'Kinshasa',
+    description: 'Correct answer position (1-5)',
+    example: 1,
   })
-  correct_answer: string;
+  correctAnswer: number;
 
   @ApiProperty({
-    example: 'Kinshasa est la capitale de la Republique Democratique du Congo.',
+    example: 'Kinshasa (1) est la capitale de la Republique Democratique du Congo.',
   })
   explanation: string;
 

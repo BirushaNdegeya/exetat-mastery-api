@@ -1,11 +1,12 @@
-# Task: REMOVE SUBJECT.ICON
+# Question Multiple Choice 1-5 Update Task
 
-## Plan Progress
-- [x] 1. Edit `src/models/subject.model.ts` - Remove icon from model & interface
-- [x] 2. Edit `src/subjects/dto/create-subject.dto.ts` - Remove icon property
-- [x] 3. Edit `src/subjects/dto/subject-response.dto.ts` - Remove icon comment reference
-- [x] 4. Add icon column DROP to `src/database/schema-migration.service.ts`
-- [ ] 5. Test Subject creation without icon (run: npm run start:dev)
+## Plan Steps:
+- [x] 1. Update DTOs (create-question.dto.ts, question-response.dto.ts)
+- [x] 2. Update Model (question.model.ts) 
+- [ ] 3. Update Service (questions.service.ts)
+- [ ] 4. Update Controller docs (questions.controller.ts)
+- [ ] 5. Handle DB migration
+- [ ] 6. Test endpoints
+- [ ] 7. Complete
 
-**ADDITIONAL FIXES:**
-- [x] Fixed TypeScript error in subjects.service.ts & controller
+Current progress: Steps 1-2 complete, starting step 3

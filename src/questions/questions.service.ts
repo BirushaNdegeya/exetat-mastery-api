@@ -5,6 +5,26 @@ import { Subject } from '../models/subject.model';
 import { TestYear } from '../models/test-year.model';
 import { Op } from 'sequelize';
 
+type QuestionOptions = {
+  option1: string;
+  option2: string;
+  option3: string;
+  option4: string;
+  option5: string;
+};
+
+type CreateQuestionPayload = {
+  question_text: string;
+  options: QuestionOptions;
+  correctAnswer: number;
+  explanation: string;
+  test_year_id: string;
+  passage?: string | null;
+};
+
+type CreateQuestionForYearPayload = Omit<CreateQuestionPayload, 'test_year_id'>;
+type UpdateQuestionPayload = Partial<CreateQuestionPayload>;
+
 @Injectable()
 export class QuestionsService {
   constructor(
@@ -119,27 +139,14 @@ export class QuestionsService {
     return this.getAllQuestions(undefined, undefined, yearId, limit, page, search);
   }
 
-  async createQuestion(data: {
-    question_text: string;
-    options: string[];
-    correct_answer: string;
-    explanation: string;
-    test_year_id: string;
-    passage?: string | null;
-  }): Promise<Question> {
+  async createQuestion(data: CreateQuestionPayload): Promise<Question> {
     await this.ensureYearExists(data.test_year_id);
     return this.questionModel.create(data);
   }
 
   async createQuestionForYear(
     yearId: string,
-    data: {
-      question_text: string;
-      options: string[];
-      correct_answer: string;
-      explanation: string;
-      passage?: string | null;
-    },
+    data: CreateQuestionForYearPayload,
   ): Promise<Question> {
     await this.ensureYearExists(yearId);
 
@@ -150,14 +157,7 @@ export class QuestionsService {
   }
 
   async createBulkQuestions(
-    data: Array<{
-      question_text: string;
-      options: string[];
-      correct_answer: string;
-      explanation: string;
-      test_year_id: string;
-      passage?: string | null;
-    }>,
+    data: CreateQuestionPayload[],
   ): Promise<Question[]> {
     for (const item of data) {
       await this.ensureYearExists(item.test_year_id);
@@ -168,14 +168,7 @@ export class QuestionsService {
 
   async updateQuestion(
     id: string,
-    data: {
-      question_text?: string;
-      options?: string[];
-      correct_answer?: string;
-      explanation?: string;
-      test_year_id?: string;
-      passage?: string | null;
-    },
+    data: UpdateQuestionPayload,
   ): Promise<Question> {
     const question = await this.getQuestionById(id);
     if (data.test_year_id) {

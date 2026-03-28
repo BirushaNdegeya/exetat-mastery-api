@@ -82,8 +82,14 @@ export class QuestionsController {
           {
             id: '550e8400-e29b-41d4-a716-446655440000',
             question_text: 'Quelle est la capitale de la RDC ?',
-            options: ['Kinshasa', 'Lubumbashi', 'Goma', 'Matadi'],
-            correct_answer: 'Kinshasa',
+            options: {
+              option1: 'Kinshasa',
+              option2: 'Lubumbashi',
+              option3: 'Goma',
+              option4: 'Matadi',
+              option5: 'Bukavu',
+            },
+            correctAnswer: 1,
             explanation: 'Kinshasa est la capitale.',
             test_year_id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
             passage: null,
@@ -202,8 +208,14 @@ export class QuestionsController {
           {
             id: '550e8400-e29b-41d4-a716-446655440000',
             question_text: 'Quelle est la capitale de la RDC ?',
-            options: ['Kinshasa', 'Lubumbashi', 'Goma', 'Matadi'],
-            correct_answer: 'Kinshasa',
+            options: {
+              option1: 'Kinshasa',
+              option2: 'Lubumbashi',
+              option3: 'Goma',
+              option4: 'Matadi',
+              option5: 'Bukavu',
+            },
+            correctAnswer: 1,
             explanation: 'Kinshasa est la capitale.',
             test_year_id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
             passage: null,
@@ -233,7 +245,8 @@ export class QuestionsController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Create a question in a year block',
-    description: 'Creates a question under the selected year block. The request body should match the question schema.',
+    description:
+      'Creates a question under the selected year block. Send exactly 5 options as option1 to option5, then set correctAnswer to the winning option number from 1 to 5.',
   })
   @ApiParam({
     name: 'yearId',
@@ -246,15 +259,40 @@ export class QuestionsController {
       properties: {
         question_text: { type: 'string', example: 'Quelle est la capitale de la RDC ?' },
         options: {
-          type: 'array',
-          items: { type: 'string' },
-          example: ['Kinshasa', 'Lubumbashi', 'Goma', 'Matadi'],
+          type: 'object',
+          properties: {
+            option1: { type: 'string', example: 'Kinshasa' },
+            option2: { type: 'string', example: 'Lubumbashi' },
+            option3: { type: 'string', example: 'Goma' },
+            option4: { type: 'string', example: 'Matadi' },
+            option5: { type: 'string', example: 'Bukavu' },
+          },
+          required: ['option1', 'option2', 'option3', 'option4', 'option5'],
         },
-        correct_answer: { type: 'string', example: 'Kinshasa' },
+        correctAnswer: {
+          type: 'number',
+          example: 1,
+          minimum: 1,
+          maximum: 5,
+          description: 'Number of the correct option, from 1 to 5',
+        },
         explanation: { type: 'string', example: 'Kinshasa est la capitale.' },
         passage: { type: 'string', nullable: true, example: null },
       },
-      required: ['question_text', 'options', 'correct_answer', 'explanation'],
+      required: ['question_text', 'options', 'correctAnswer', 'explanation'],
+      example: {
+        question_text: 'Quelle est la capitale de la RDC ?',
+        options: {
+          option1: 'Kinshasa',
+          option2: 'Lubumbashi',
+          option3: 'Goma',
+          option4: 'Matadi',
+          option5: 'Bukavu',
+        },
+        correctAnswer: 1,
+        explanation: 'Kinshasa est la capitale.',
+        passage: null,
+      },
     },
   })
   @ApiResponse({
@@ -278,7 +316,8 @@ export class QuestionsController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Create multiple questions',
-    description: 'Bulk creates questions. Each item must provide a valid year block ID.',
+    description:
+      'Bulk creates questions. Each item must provide a valid year block ID, 5 labeled options (option1-option5), and a numeric correctAnswer between 1 and 5.',
   })
   @ApiBody({ type: CreateQuestionDto, isArray: true })
   @ApiResponse({
@@ -299,7 +338,8 @@ export class QuestionsController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Update a question',
-    description: 'Updates an existing question. You can also move the question to another year block by sending a new test_year_id.',
+    description:
+      'Updates an existing question. You can also move the question to another year block by sending a new test_year_id. If updating choices, send the numbered options object and use correctAnswer from 1 to 5.',
   })
   @ApiParam({
     name: 'id',
