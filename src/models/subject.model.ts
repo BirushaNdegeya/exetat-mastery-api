@@ -24,26 +24,26 @@ export class Subject extends Model<Subject, SubjectCreationAttributes> {
     type: DataType.STRING,
     allowNull: false,
   })
-  name: string;
+  declare name: string;
 
   @Column({
     type: DataType.TEXT,
     allowNull: true,
   })
-  description: string | null;
+  declare description: string | null;
 
   @ForeignKey(() => Section)
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  section_id: string;
+  declare section_id: string;
 
   @BelongsTo(() => Section)
-  section: Section;
+  declare section: Section;
 
   @HasMany(() => TestYear)
-  testYears: TestYear[];
+  declare testYears: TestYear[];
 
   declare createdAt: Date;
   declare updatedAt: Date;

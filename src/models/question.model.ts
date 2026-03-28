@@ -33,13 +33,13 @@ export class Question extends Model<Question, QuestionCreationAttributes> {
     type: DataType.TEXT,
     allowNull: false,
   })
-  question_text: string;
+  declare question_text: string;
 
   @Column({
     type: DataType.JSON,
     allowNull: false,
   })
-  options: {
+  declare options: {
     option1: string;
     option2: string;
     option3: string;
@@ -48,35 +48,36 @@ export class Question extends Model<Question, QuestionCreationAttributes> {
   };
 
   @Column({
+    field: 'correct_answer',
     type: DataType.INTEGER,
     allowNull: false,
   })
-  correctAnswer: number;
+  declare correctAnswer: number;
 
   @Column({
     type: DataType.TEXT,
     allowNull: false,
   })
-  explanation: string;
+  declare explanation: string;
 
   @ForeignKey(() => TestYear)
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  test_year_id: string;
+  declare test_year_id: string;
 
   @BelongsTo(() => TestYear)
-  testYear: TestYear;
+  declare testYear: TestYear;
 
   @Column({
     type: DataType.TEXT,
     allowNull: true,
   })
-  passage: string | null;
+  declare passage: string | null;
 
   @HasMany(() => UserProgress)
-  userProgress: UserProgress[];
+  declare userProgress: UserProgress[];
 
   declare createdAt: Date;
   declare updatedAt: Date;
