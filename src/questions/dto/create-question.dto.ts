@@ -1,5 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmptyObject, IsNumber, IsString, Min, Max, IsOptional, IsNotEmpty } from 'class-validator';
+import { IsIn, IsNotEmptyObject, IsNumber, IsString, Min, Max, IsOptional, IsNotEmpty } from 'class-validator';
+
+export const QUESTION_TYPES = [
+  'standard',
+  'math_equation',
+  'language_passage',
+  'dissertation',
+  'oral',
+] as const;
+
+export const QUESTION_LANGUAGES = ['francais', 'anglais'] as const;
 
 export class CreateQuestionDto {
   @ApiProperty({
@@ -64,4 +74,35 @@ export class CreateQuestionDto {
   @IsOptional()
   @IsString()
   passage?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Optional shared passage-group identifier used to tie multiple language questions to the same text.',
+    example: 'lang-fr-2026-passage-1',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  passage_group?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Question presentation type used by the admin dashboard for math, language, oral, or dissertation workflows.',
+    enum: QUESTION_TYPES,
+    example: 'math_equation',
+    default: 'standard',
+  })
+  @IsOptional()
+  @IsString()
+  @IsIn(QUESTION_TYPES)
+  question_type?: (typeof QUESTION_TYPES)[number];
+
+  @ApiPropertyOptional({
+    description: 'Optional language tag, mainly for language and oral question branches.',
+    enum: QUESTION_LANGUAGES,
+    nullable: true,
+    example: 'francais',
+  })
+  @IsOptional()
+  @IsString()
+  @IsIn(QUESTION_LANGUAGES)
+  language?: (typeof QUESTION_LANGUAGES)[number] | null;
 }

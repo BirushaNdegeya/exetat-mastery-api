@@ -3,6 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize';
 import { DataTypes, QueryTypes, Sequelize } from 'sequelize';
 import { Question } from '../models/question.model';
 import { TestYear } from '../models/test-year.model';
+import { SUBJECT_BRANCH_TYPES } from '../subjects/dto/create-subject.dto';
 
 interface LegacyQuestionRow {
   id: string;
@@ -27,7 +28,9 @@ export class SchemaMigrationService implements OnModuleInit {
     await this.testYearModel.sync();
     await this.questionModel.sync();
     await this.removeSubjectIconColumn();
+    await this.ensureSubjectBranchTypeColumn();
     await this.ensureQuestionTestYearColumn();
+    await this.ensureQuestionMetadataColumns();
     await this.backfillTestYearsFromLegacyQuestions();
   }
 
@@ -51,6 +54,50 @@ export class SchemaMigrationService implements OnModuleInit {
         allowNull: true,
       });
       this.logger.log('Added questions.test_year_id column');
+    }
+  }
+
+  private async ensureSubjectBranchTypeColumn(): Promise<void> {
+    const queryInterface = this.sequelize.getQueryInterface();
+    const subjectTable = await queryInterface.describeTable('subjects');
+
+    if (!subjectTable.branch_type) {
+      await queryInterface.addColumn('subjects', 'branch_type', {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: SUBJECT_BRANCH_TYPES[0],
+      });
+      this.logger.log('Added subjects.branch_type column');
+    }
+  }
+
+  private async ensureQuestionMetadataColumns(): Promise<void> {
+    const queryInterface = this.sequelize.getQueryInterface();
+    const questionTable = await queryInterface.describeTable('questions');
+
+    if (!questionTable.question_type) {
+      await queryInterface.addColumn('questions', 'question_type', {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'standard',
+      });
+      this.logger.log('Added questions.question_type column');
+    }
+
+    if (!questionTable.language) {
+      await queryInterface.addColumn('questions', 'language', {
+        type: DataTypes.STRING,
+        allowNull: true,
+      });
+      this.logger.log('Added questions.language column');
+    }
+
+    if (!questionTable.passage_group) {
+      await queryInterface.addColumn('questions', 'passage_group', {
+        type: DataTypes.STRING,
+        allowNull: true,
+      });
+      this.logger.log('Added questions.passage_group column');
     }
   }
 

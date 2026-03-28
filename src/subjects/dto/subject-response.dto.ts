@@ -14,18 +14,18 @@ export class SubjectResponseDto {
   })
   name: string;
 
-  @ApiProperty({
-    description: 'Subject icon (removed - no longer used).',
-    example: 'N/A',
-  })
-  icon: string;
-
   @ApiPropertyOptional({
     description: 'Optional description of the subject content and its test-year question structure',
     example: 'Questions de culture generale organisees par annee',
     nullable: true,
   })
   description?: string | null;
+
+  @ApiProperty({
+    description: 'Structured branch type selected in the admin dashboard.',
+    example: 'Culture Générale',
+  })
+  branch_type: string;
 
   @ApiProperty({
     description: 'Parent section ID for this subject. Flow: section -> subject -> test year blocks -> questions.',

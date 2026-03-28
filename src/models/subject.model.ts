@@ -6,6 +6,7 @@ interface SubjectCreationAttributes {
   name: string;
   description?: string | null;
   section_id: string;
+  branch_type: string;
 }
 
 @Table({
@@ -31,6 +32,13 @@ export class Subject extends Model<Subject, SubjectCreationAttributes> {
     allowNull: true,
   })
   declare description: string | null;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: 'Culture Générale',
+  })
+  declare branch_type: string;
 
   @ForeignKey(() => Section)
   @Column({

@@ -93,6 +93,9 @@ export class QuestionsController {
             explanation: 'Kinshasa est la capitale.',
             test_year_id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
             passage: null,
+            passage_group: null,
+            question_type: 'standard',
+            language: null,
           },
         ],
         meta: {
@@ -219,6 +222,9 @@ export class QuestionsController {
             explanation: 'Kinshasa est la capitale.',
             test_year_id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
             passage: null,
+            passage_group: null,
+            question_type: 'standard',
+            language: null,
           },
         ],
         meta: {
@@ -278,6 +284,18 @@ export class QuestionsController {
         },
         explanation: { type: 'string', example: 'Kinshasa est la capitale.' },
         passage: { type: 'string', nullable: true, example: null },
+        passage_group: { type: 'string', nullable: true, example: null },
+        question_type: {
+          type: 'string',
+          enum: ['standard', 'math_equation', 'language_passage', 'dissertation', 'oral'],
+          example: 'standard',
+        },
+        language: {
+          type: 'string',
+          nullable: true,
+          enum: ['francais', 'anglais'],
+          example: null,
+        },
       },
       required: ['question_text', 'options', 'correctAnswer', 'explanation'],
       example: {
@@ -292,6 +310,9 @@ export class QuestionsController {
         correctAnswer: 1,
         explanation: 'Kinshasa est la capitale.',
         passage: null,
+        passage_group: null,
+        question_type: 'standard',
+        language: null,
       },
     },
   })

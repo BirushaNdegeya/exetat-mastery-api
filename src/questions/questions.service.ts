@@ -20,10 +20,17 @@ type CreateQuestionPayload = {
   explanation: string;
   test_year_id: string;
   passage?: string | null;
+  passage_group?: string | null;
+  question_type?: string;
+  language?: string | null;
 };
 
 type CreateQuestionForYearPayload = Omit<CreateQuestionPayload, 'test_year_id'>;
 type UpdateQuestionPayload = Partial<CreateQuestionPayload>;
+type QuestionPersistencePayload = CreateQuestionPayload & {
+  subject_id: string;
+  year: number;
+};
 
 @Injectable()
 export class QuestionsService {
@@ -140,30 +147,38 @@ export class QuestionsService {
   }
 
   async createQuestion(data: CreateQuestionPayload): Promise<Question> {
-    await this.ensureYearExists(data.test_year_id);
-    return this.questionModel.create(data);
+    const testYear = await this.ensureYearExists(data.test_year_id);
+    return this.questionModel.create(this.attachSubjectId(data, testYear));
   }
 
   async createQuestionForYear(
     yearId: string,
     data: CreateQuestionForYearPayload,
   ): Promise<Question> {
-    await this.ensureYearExists(yearId);
+    const testYear = await this.ensureYearExists(yearId);
 
-    return this.questionModel.create({
-      ...data,
-      test_year_id: yearId,
-    });
+    return this.questionModel.create(
+      this.attachSubjectId(
+        {
+          ...data,
+          test_year_id: yearId,
+        },
+        testYear,
+      ),
+    );
   }
 
   async createBulkQuestions(
     data: CreateQuestionPayload[],
   ): Promise<Question[]> {
+    const rows: QuestionPersistencePayload[] = [];
+
     for (const item of data) {
-      await this.ensureYearExists(item.test_year_id);
+      const testYear = await this.ensureYearExists(item.test_year_id);
+      rows.push(this.attachSubjectId(item, testYear));
     }
 
-    return this.questionModel.bulkCreate(data);
+    return this.questionModel.bulkCreate(rows);
   }
 
   async updateQuestion(
@@ -172,7 +187,11 @@ export class QuestionsService {
   ): Promise<Question> {
     const question = await this.getQuestionById(id);
     if (data.test_year_id) {
-      await this.ensureYearExists(data.test_year_id);
+      const testYear = await this.ensureYearExists(data.test_year_id);
+      Object.assign(data, {
+        subject_id: testYear.subject_id,
+        year: testYear.year,
+      });
     }
     await question.update(data);
     return question;
@@ -191,5 +210,16 @@ export class QuestionsService {
     }
 
     return testYear;
+  }
+
+  private attachSubjectId(
+    data: CreateQuestionPayload,
+    testYear: TestYear,
+  ): QuestionPersistencePayload {
+    return {
+      ...data,
+      subject_id: testYear.subject_id,
+      year: testYear.year,
+    };
   }
 }

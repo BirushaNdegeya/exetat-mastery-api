@@ -53,6 +53,23 @@ export class QuestionResponseDto {
   })
   passage?: string | null;
 
+  @ApiPropertyOptional({
+    example: 'lang-fr-2026-passage-1',
+    nullable: true,
+  })
+  passage_group?: string | null;
+
+  @ApiProperty({
+    example: 'standard',
+  })
+  question_type: string;
+
+  @ApiPropertyOptional({
+    example: 'francais',
+    nullable: true,
+  })
+  language?: string | null;
+
   @ApiProperty({
     type: String,
     format: 'date-time',

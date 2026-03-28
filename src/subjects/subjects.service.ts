@@ -70,6 +70,7 @@ export class SubjectsService {
     name: string;
     description?: string | null;
     section_id: string;
+    branch_type: string;
   }): Promise<Subject> {
     return this.subjectModel.create(data);
   }
@@ -80,6 +81,7 @@ export class SubjectsService {
       name?: string;
       description?: string | null;
       section_id?: string;
+      branch_type?: string;
     },
   ): Promise<Subject> {
     const subject = await this.findSubjectEntityById(id);
