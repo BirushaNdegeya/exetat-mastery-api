@@ -4,9 +4,8 @@ import { TestYear } from './test-year.model';
 
 interface SubjectCreationAttributes {
   name: string;
-  icon: string;
   description?: string | null;
-  section_id?: string | null;
+  section_id: string;
 }
 
 @Table({
@@ -28,12 +27,6 @@ export class Subject extends Model<Subject, SubjectCreationAttributes> {
   name: string;
 
   @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  icon: string;
-
-  @Column({
     type: DataType.TEXT,
     allowNull: true,
   })
@@ -42,9 +35,9 @@ export class Subject extends Model<Subject, SubjectCreationAttributes> {
   @ForeignKey(() => Section)
   @Column({
     type: DataType.UUID,
-    allowNull: true,
+    allowNull: false,
   })
-  section_id: string | null;
+  section_id: string;
 
   @BelongsTo(() => Section)
   section: Section;

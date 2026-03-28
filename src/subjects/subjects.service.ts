@@ -68,9 +68,8 @@ export class SubjectsService {
 
   async createSubject(data: {
     name: string;
-    icon: string;
     description?: string | null;
-    section_id?: string | null;
+    section_id: string;
   }): Promise<Subject> {
     return this.subjectModel.create(data);
   }
@@ -79,9 +78,8 @@ export class SubjectsService {
     id: string,
     data: {
       name?: string;
-      icon?: string;
       description?: string | null;
-      section_id?: string | null;
+      section_id?: string;
     },
   ): Promise<Subject> {
     const subject = await this.findSubjectEntityById(id);

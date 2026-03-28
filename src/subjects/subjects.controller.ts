@@ -34,12 +34,13 @@ export class SubjectsController {
   @Get()
   @ApiOperation({
     summary: 'List subjects',
-    description: 'Returns all subjects. You can optionally filter the list by section.',
+    description:
+      'Returns subjects in the learning hierarchy. Use section_id to list only the subjects that belong to one section. Flow: section -> subject -> test year blocks -> questions.',
   })
   @ApiQuery({
     name: 'section_id',
     required: false,
-    description: 'Filter subjects by section ID',
+    description: 'Optional section ID to return only the subjects that belong to that section',
     schema: { type: 'string', format: 'uuid' },
   })
   @ApiResponse({
@@ -55,7 +56,8 @@ export class SubjectsController {
   @Get(':id')
   @ApiOperation({
     summary: 'Get a subject by ID',
-    description: 'Returns a single subject with metadata useful for the admin hierarchy.',
+    description:
+      'Returns one subject with hierarchy metadata, including counts that help the admin understand how many test-year blocks and questions are attached.',
   })
   @ApiParam({
     name: 'id',
@@ -75,7 +77,7 @@ export class SubjectsController {
   @Get(':id/question-count')
   @ApiOperation({
     summary: 'Get the total number of questions for a subject',
-    description: 'Counts questions across all year blocks attached to the subject.',
+    description: 'Counts questions across every test-year block that belongs to the subject.',
   })
   @ApiParam({
     name: 'id',
@@ -102,9 +104,23 @@ export class SubjectsController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Create a subject',
-    description: 'Creates a new subject that will contain year blocks and their questions.',
+    description:
+      'Creates a subject under an existing section. After creation, that subject becomes the parent of its test-year blocks, and each test-year block becomes the parent of its questions.',
   })
-  @ApiBody({ type: CreateSubjectDto })
+  @ApiBody({
+    type: CreateSubjectDto,
+    description: 'Provide the subject name, an optional description, and the parent section_id.',
+    examples: {
+      createSubject: {
+        summary: 'Create Culture Generale under a section',
+        value: {
+          name: 'Culture Generale',
+          description: 'Gerer les questions par categorie et par annee',
+          section_id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+        },
+      },
+    },
+  })
   @ApiResponse({
     status: 201,
     description: 'Subject created successfully',
@@ -122,14 +138,28 @@ export class SubjectsController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Update a subject',
-    description: 'Updates the editable fields of an existing subject.',
+    description:
+      'Updates the editable subject fields. A subject remains linked to a section and continues to own its test-year blocks and questions.',
   })
   @ApiParam({
     name: 'id',
     description: 'Subject identifier',
     schema: { type: 'string', format: 'uuid' },
   })
-  @ApiBody({ type: CreateSubjectDto })
+  @ApiBody({
+    type: CreateSubjectDto,
+    description: 'Send the updated subject name, optional description, and section_id.',
+    examples: {
+      updateSubject: {
+        summary: 'Move or rename a subject',
+        value: {
+          name: 'Culture Generale',
+          description: 'Questions classees par section, sujet et annee',
+          section_id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+        },
+      },
+    },
+  })
   @ApiResponse({
     status: 200,
     description: 'Subject updated successfully',
@@ -151,7 +181,7 @@ export class SubjectsController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Delete a subject',
-    description: 'Deletes a subject. Existing year blocks and questions should be cleaned up before removal.',
+    description: 'Deletes a subject and cleans up every test-year block and question attached to it.',
   })
   @ApiParam({
     name: 'id',

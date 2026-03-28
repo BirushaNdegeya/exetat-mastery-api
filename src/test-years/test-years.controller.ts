@@ -34,7 +34,7 @@ export class TestYearsController {
   @Get('subjects/:subjectId/years')
   @ApiOperation({
     summary: 'List year blocks for a subject',
-    description: 'Returns all year blocks attached to a subject so the admin can drill into questions by year.',
+    description: 'Returns the test-year blocks that belong to one subject. This is the next level after subject in the hierarchy: section -> subject -> test year blocks -> questions.',
   })
   @ApiParam({
     name: 'subjectId',
@@ -58,7 +58,7 @@ export class TestYearsController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Create a year block under a subject',
-    description: 'Creates a new year block. The year must be unique within the selected subject.',
+    description: 'Creates a new test-year block under a subject. The year must be unique within that subject, and the new block becomes the parent of its questions.',
   })
   @ApiParam({
     name: 'subjectId',
@@ -91,7 +91,7 @@ export class TestYearsController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Rename a year block',
-    description: 'Updates the numeric year label for an existing year block.',
+    description: 'Updates the numeric year label for an existing test-year block under its subject.',
   })
   @ApiParam({
     name: 'id',
@@ -125,7 +125,7 @@ export class TestYearsController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Delete a year block',
-    description: 'Deletes a year block and all questions that belong to it.',
+    description: 'Deletes a test-year block and all questions that belong to it.',
   })
   @ApiParam({
     name: 'id',

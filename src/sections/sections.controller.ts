@@ -29,7 +29,10 @@ export class SectionsController {
   constructor(private readonly sectionsService: SectionsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all sections' })
+  @ApiOperation({
+    summary: 'List sections',
+    description: 'Returns the top level of the hierarchy. Each section contains subjects, each subject contains test-year blocks, and each test-year block contains questions.',
+  })
   @ApiResponse({
     status: 200,
     description: 'Returns all sections',
@@ -51,7 +54,10 @@ export class SectionsController {
   }
 
   @Get('count')
-  @ApiOperation({ summary: 'Get sections count' })
+  @ApiOperation({
+    summary: 'Get section count',
+    description: 'Returns how many top-level sections exist in the hierarchy.',
+  })
   @ApiResponse({
     status: 200,
     description: 'Returns total number of sections',
@@ -70,7 +76,10 @@ export class SectionsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Create a section' })
+  @ApiOperation({
+    summary: 'Create a section',
+    description: 'Creates a top-level section that can later contain multiple subjects.',
+  })
   @ApiBody({ type: CreateSectionDto })
   @ApiResponse({
     status: 201,
@@ -95,7 +104,10 @@ export class SectionsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Update a section' })
+  @ApiOperation({
+    summary: 'Update a section',
+    description: 'Updates the name of a top-level section that groups subjects.',
+  })
   @ApiParam({
     name: 'id',
     description: 'Section ID',
@@ -129,7 +141,10 @@ export class SectionsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Delete a section' })
+  @ApiOperation({
+    summary: 'Delete a section',
+    description: 'Deletes a top-level section. Any dependent subject hierarchy rules are handled by the service layer and database constraints.',
+  })
   @ApiParam({
     name: 'id',
     description: 'Section ID',
