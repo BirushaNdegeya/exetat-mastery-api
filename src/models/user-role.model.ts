@@ -28,16 +28,16 @@ export class UserRole extends Model<UserRole, UserRoleCreationAttributes> {
     type: DataType.UUID,
     allowNull: false,
   })
-  userId: string;
+  declare userId: string;
 
   @BelongsTo(() => User)
-  user: User;
+  declare user: User;
 
   @Column({
     type: DataType.ENUM(...Object.values(UserRoleEnum)),
     allowNull: false,
   })
-  role: UserRoleEnum;
+  declare role: UserRoleEnum;
 
   declare createdAt: Date;
   declare updatedAt: Date;

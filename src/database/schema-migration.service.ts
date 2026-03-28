@@ -26,8 +26,19 @@ export class SchemaMigrationService implements OnModuleInit {
   async onModuleInit(): Promise<void> {
     await this.testYearModel.sync();
     await this.questionModel.sync();
+    await this.removeSubjectIconColumn();
     await this.ensureQuestionTestYearColumn();
     await this.backfillTestYearsFromLegacyQuestions();
+  }
+
+  private async removeSubjectIconColumn(): Promise<void> {
+    const queryInterface = this.sequelize.getQueryInterface();
+    const subjectTable = await queryInterface.describeTable('subjects');
+
+    if (subjectTable.icon) {
+      await queryInterface.removeColumn('subjects', 'icon');
+      this.logger.log('Removed subjects.icon column');
+    }
   }
 
   private async ensureQuestionTestYearColumn(): Promise<void> {

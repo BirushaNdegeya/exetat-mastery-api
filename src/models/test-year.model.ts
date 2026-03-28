@@ -30,20 +30,20 @@ export class TestYear extends Model<TestYear, TestYearCreationAttributes> {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  year: number;
+  declare year: number;
 
   @ForeignKey(() => Subject)
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  subject_id: string;
+  declare subject_id: string;
 
   @BelongsTo(() => Subject)
-  subject: Subject;
+  declare subject: Subject;
 
   @HasMany(() => Question)
-  questions: Question[];
+  declare questions: Question[];
 
   declare createdAt: Date;
   declare updatedAt: Date;

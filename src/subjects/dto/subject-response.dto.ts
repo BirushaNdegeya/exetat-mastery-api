@@ -14,6 +14,12 @@ export class SubjectResponseDto {
   })
   name: string;
 
+  @ApiProperty({
+    description: 'Subject icon (removed - no longer used).',
+    example: 'N/A',
+  })
+  icon: string;
+
   @ApiPropertyOptional({
     description: 'Optional description of the subject content and its test-year question structure',
     example: 'Questions de culture generale organisees par annee',

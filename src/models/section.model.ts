@@ -22,10 +22,10 @@ export class Section extends Model<Section, SectionCreationAttributes> {
     allowNull: false,
     unique: true,
   })
-  name: string;
+  declare name: string;
 
   @HasMany(() => Subject)
-  subjects: Subject[];
+  declare subjects: Subject[];
 
   declare createdAt: Date;
   declare updatedAt: Date;
