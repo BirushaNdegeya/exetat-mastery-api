@@ -1,5 +1,6 @@
 import { Column, DataType, Model, Table, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { User } from './user.model';
+import { Section } from './section.model';
 
 interface ProfileCreationAttributes {
   userId: string;
@@ -8,7 +9,9 @@ interface ProfileCreationAttributes {
   postnom?: string | null;
   nom?: string | null;
   matricule?: string | null;
+  /** @deprecated Kept for legacy rows; prefer section_id */
   section?: string | null;
+  section_id?: string | null;
   avatar_url?: string | null;
 }
 
@@ -65,11 +68,22 @@ export class Profile extends Model<Profile, ProfileCreationAttributes> {
   })
   matricule: string | null;
 
+  /** Legacy display copy; canonical link is section_id */
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   section: string | null;
+
+  @ForeignKey(() => Section)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  section_id: string | null;
+
+  @BelongsTo(() => Section)
+  sectionEntity: Section;
 
   @Column({
     type: DataType.STRING,

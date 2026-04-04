@@ -22,8 +22,19 @@ export class ProfileResponseDto {
   @ApiPropertyOptional({ example: '2024/KINSHASA/001', nullable: true })
   matricule: string | null;
 
-  @ApiPropertyOptional({ example: 'MECANIQUE GENERALE', nullable: true })
+  @ApiPropertyOptional({
+    description: 'Resolved section label (convenience); canonical key is section_id',
+    example: 'MECANIQUE GENERALE',
+    nullable: true,
+  })
   section: string | null;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description: 'FK to sections.id — use this for routing and PATCH updates',
+    nullable: true,
+  })
+  section_id: string | null;
 
   @ApiPropertyOptional({ example: 'https://cdn.example.com/avatar.png', nullable: true })
   avatar_url: string | null;

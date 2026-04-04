@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/sequelize';
 import { DataTypes, QueryTypes, Sequelize } from 'sequelize';
+import { findSectionMatchingLegacyLabel } from '../sections/section-legacy-match.util';
 import { Question } from '../models/question.model';
 import { TestYear } from '../models/test-year.model';
 import { SUBJECT_BRANCH_TYPES } from '../subjects/dto/create-subject.dto';
@@ -25,6 +26,8 @@ export class SchemaMigrationService implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
+    await this.ensureProfileSectionIdColumn();
+    await this.backfillProfilesLegacySectionTextToIds();
     await this.testYearModel.sync();
     await this.questionModel.sync();
     await this.removeSubjectIconColumn();
@@ -32,6 +35,69 @@ export class SchemaMigrationService implements OnModuleInit {
     await this.ensureQuestionTestYearColumn();
     await this.ensureQuestionMetadataColumns();
     await this.backfillTestYearsFromLegacyQuestions();
+  }
+
+  /**
+   * Sequelize sync does not always ALTER existing `profiles` when a new FK is added;
+   * ensures `profiles.section_id` exists (FK → sections.id).
+   */
+  private async ensureProfileSectionIdColumn(): Promise<void> {
+    const queryInterface = this.sequelize.getQueryInterface();
+    let profileTable: Record<string, unknown>;
+    try {
+      profileTable = await queryInterface.describeTable('profiles');
+    } catch {
+      this.logger.warn('profiles table not found yet; skip section_id migration');
+      return;
+    }
+
+    if (profileTable.section_id) {
+      return;
+    }
+
+    await queryInterface.addColumn('profiles', 'section_id', {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: { model: 'sections', key: 'id' },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
+    });
+    this.logger.log('Added profiles.section_id column (FK → sections.id)');
+  }
+
+  /** Links profiles.section_id from legacy profiles.section when names match (spacing / case / accents). */
+  private async backfillProfilesLegacySectionTextToIds(): Promise<void> {
+    try {
+      const sections = await this.sequelize.query<{ id: string; name: string }>(
+        'SELECT id, name FROM sections',
+        { type: QueryTypes.SELECT },
+      );
+      if (sections.length === 0) {
+        return;
+      }
+
+      const profiles = await this.sequelize.query<{ id: string; section: string }>(
+        `SELECT id, section FROM profiles WHERE section_id IS NULL AND section IS NOT NULL AND TRIM(section) <> ''`,
+        { type: QueryTypes.SELECT },
+      );
+
+      let updated = 0;
+      for (const p of profiles) {
+        const match = findSectionMatchingLegacyLabel(p.section, sections);
+        if (match) {
+          await this.sequelize.query(
+            `UPDATE profiles SET section_id = :sid, section = :sname WHERE id = :pid`,
+            { replacements: { sid: match.id, sname: match.name, pid: p.id } },
+          );
+          updated += 1;
+        }
+      }
+      if (updated > 0) {
+        this.logger.log(`Backfilled section_id on ${updated} profile row(s) from legacy section text`);
+      }
+    } catch (e) {
+      this.logger.warn(`backfillProfilesLegacySectionTextToIds skipped: ${e instanceof Error ? e.message : String(e)}`);
+    }
   }
 
   private async removeSubjectIconColumn(): Promise<void> {

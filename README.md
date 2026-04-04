@@ -129,7 +129,7 @@ DB_DATABASE=nestjs_sequelize_starter
 # Application Configuration
 NODE_ENV=development            # development | production | test
 PORT=3000
-APP_NAME=Your App Name
+APP_NAME=EXETAT Test
 APP_URL=http://localhost:3000
 
 # JWT Configuration

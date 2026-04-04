@@ -37,7 +37,8 @@ export class ProfilesController {
   @Patch('me')
   @ApiOperation({
     summary: 'Update my profile',
-    description: 'Updates the authenticated user profile and returns the updated resource.',
+    description:
+      'Partial PATCH: send only fields to change. Use `section_id` (uuid from GET /sections), not a free-text section name. Clears with `"section_id": null`. Legacy `section` string on the row is updated for display. Syncs `users.name` from identity fields. Requires Bearer JWT.',
   })
   @ApiBody({ type: UpdateProfileDto })
   @ApiOkResponse({

@@ -25,7 +25,7 @@ export class EmailService {
     ipAddress: string,
     timestamp: Date,
   ): Promise<void> {
-    const appName = this.configService.get<string>('APP_NAME', 'Your App');
+    const appName = this.configService.get<string>('APP_NAME', 'EXETAT Test');
     const appUrl = this.configService.get<string>('APP_URL', 'http://localhost:3000');
 
     const htmlContent = this.getLoginNotificationTemplate(
@@ -52,7 +52,7 @@ export class EmailService {
     ipAddress: string,
     timestamp: Date,
   ): Promise<void> {
-    const appName = this.configService.get<string>('APP_NAME', 'Your App');
+    const appName = this.configService.get<string>('APP_NAME', 'EXETAT Test');
     const appUrl = this.configService.get<string>('APP_URL', 'http://localhost:3000');
 
     const htmlContent = this.getOTPTemplate(
@@ -103,77 +103,90 @@ export class EmailService {
       max-width: 600px;
       margin: 40px auto;
       background-color: #ffffff;
-      border-radius: 8px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 16px rgba(88, 204, 2, 0.12);
     }
     .header {
-      background-color: #1a1a1a;
-      padding: 20px;
+      background-color: #58cc02;
+      padding: 28px 20px;
       text-align: center;
+    }
+    .header-title {
+      color: #ffffff;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 0.5px;
     }
     .content {
       padding: 40px 30px;
     }
     h1 {
-      color: #1a1a1a;
+      color: #4b4b4b;
       font-size: 24px;
       margin: 0 0 20px 0;
       font-weight: 600;
     }
     p {
-      color: #333333;
+      color: #4b4b4b;
       font-size: 16px;
       line-height: 1.6;
       margin: 0 0 15px 0;
     }
     .otp-box {
-      background-color: #f9f9f9;
-      border: 2px solid #ffd700;
-      border-radius: 8px;
-      padding: 20px;
+      background-color: #f0fce6;
+      border: 2px solid #58cc02;
+      border-radius: 12px;
+      padding: 24px 20px;
       margin: 30px 0;
       text-align: center;
     }
     .otp-code {
-      font-size: 36px;
+      font-size: 38px;
       font-weight: 700;
-      color: #1a1a1a;
-      letter-spacing: 8px;
+      color: #43c000;
+      letter-spacing: 10px;
       font-family: 'Courier New', monospace;
     }
     .otp-label {
       font-size: 14px;
-      color: #666666;
+      color: #4b4b4b;
       margin-bottom: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     .info-box {
-      background-color: #f9f9f9;
-      border-left: 4px solid #ffd700;
+      background-color: #e8f4fd;
+      border-left: 4px solid #1cb0f6;
       padding: 15px;
       margin: 20px 0;
+      border-radius: 0 6px 6px 0;
     }
     .info-box p {
       margin: 5px 0;
       font-size: 14px;
-      color: #333333;
+      color: #4b4b4b;
     }
     .warning {
-      background-color: #fff3cd;
-      border-left: 4px solid #ffc107;
+      background-color: #fff0f0;
+      border-left: 4px solid #ff4b4b;
       padding: 15px;
       margin: 20px 0;
       font-size: 14px;
-      color: #856404;
+      color: #cc0000;
+      border-radius: 0 6px 6px 0;
     }
     .help-text {
       font-size: 14px;
-      color: #666666;
+      color: #4b4b4b;
       margin-top: 20px;
     }
     .help-text a {
-      color: #ffd700;
+      color: #1cb0f6;
       text-decoration: none;
+      font-weight: 600;
     }
     .disclaimer {
       font-size: 13px;
@@ -182,15 +195,15 @@ export class EmailService {
       margin-top: 20px;
     }
     .footer {
-      background-color: #f9f9f9;
+      background-color: #f0fce6;
       padding: 30px;
       text-align: center;
-      border-top: 1px solid #e0e0e0;
+      border-top: 2px solid #89e219;
     }
     .footer-text {
-      color: #ffd700;
+      color: #43c000;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 15px;
     }
   </style>
@@ -198,7 +211,7 @@ export class EmailService {
 <body>
   <div class="container">
     <div class="header">
-      <!-- You can add a logo here if needed -->
+      <p class="header-title">${appName}</p>
     </div>
     <div class="content">
       <h1>Votre code de connexion</h1>
@@ -269,40 +282,50 @@ export class EmailService {
       max-width: 600px;
       margin: 40px auto;
       background-color: #ffffff;
-      border-radius: 8px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 16px rgba(88, 204, 2, 0.12);
     }
     .header {
-      background-color: #1a1a1a;
-      padding: 20px;
+      background-color: #58cc02;
+      padding: 28px 20px;
       text-align: center;
+    }
+    .header-title {
+      color: #ffffff;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 0.5px;
     }
     .content {
       padding: 40px 30px;
     }
     h1 {
-      color: #1a1a1a;
+      color: #4b4b4b;
       font-size: 24px;
       margin: 0 0 20px 0;
       font-weight: 600;
     }
     p {
-      color: #333333;
+      color: #4b4b4b;
       font-size: 16px;
       line-height: 1.6;
       margin: 0 0 15px 0;
     }
     .highlight {
-      background-color: #ffd700;
-      padding: 2px 4px;
-      font-weight: 500;
+      background-color: #89e219;
+      color: #ffffff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
     }
     .info-box {
-      background-color: #f9f9f9;
-      border-left: 4px solid #ffd700;
+      background-color: #e8f4fd;
+      border-left: 4px solid #1cb0f6;
       padding: 15px;
       margin: 20px 0;
+      border-radius: 0 6px 6px 0;
     }
     .info-box p {
       margin: 5px 0;
@@ -310,30 +333,32 @@ export class EmailService {
     }
     .info-label {
       font-weight: 600;
-      color: #1a1a1a;
+      color: #2b70c9;
     }
     .button {
       display: inline-block;
-      background-color: #ffd700;
-      color: #1a1a1a;
+      background-color: #58cc02;
+      color: #ffffff;
       text-decoration: none;
-      padding: 12px 30px;
-      border-radius: 4px;
-      font-weight: 600;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-weight: 700;
       margin: 20px 0;
       font-size: 16px;
+      letter-spacing: 0.3px;
     }
     .button:hover {
-      background-color: #ffed4e;
+      background-color: #43c000;
     }
     .help-text {
       font-size: 14px;
-      color: #666666;
+      color: #4b4b4b;
       margin-top: 20px;
     }
     .help-text a {
-      color: #ffd700;
+      color: #1cb0f6;
       text-decoration: none;
+      font-weight: 600;
     }
     .disclaimer {
       font-size: 13px;
@@ -342,15 +367,15 @@ export class EmailService {
       margin-top: 20px;
     }
     .footer {
-      background-color: #f9f9f9;
+      background-color: #f0fce6;
       padding: 30px;
       text-align: center;
-      border-top: 1px solid #e0e0e0;
+      border-top: 2px solid #89e219;
     }
     .footer-text {
-      color: #ffd700;
+      color: #43c000;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 15px;
     }
     .social-links {
@@ -359,7 +384,7 @@ export class EmailService {
     .social-links a {
       display: inline-block;
       margin: 0 8px;
-      color: #666666;
+      color: #4b4b4b;
       text-decoration: none;
       font-size: 20px;
     }
@@ -368,7 +393,7 @@ export class EmailService {
 <body>
   <div class="container">
     <div class="header">
-      <!-- You can add a logo here if needed -->
+      <p class="header-title">${appName}</p>
     </div>
     <div class="content">
       <h1>Connexion depuis un nouvel appareil ou emplacement ?</h1>
@@ -461,90 +486,99 @@ export class EmailService {
       max-width: 600px;
       margin: 40px auto;
       background-color: #ffffff;
-      border-radius: 8px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 16px rgba(88, 204, 2, 0.12);
     }
     .header {
-      background-color: #1a1a1a;
-      padding: 20px;
+      background-color: #58cc02;
+      padding: 28px 20px;
       text-align: center;
+    }
+    .header-title {
+      color: #ffffff;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 0.5px;
     }
     .content {
       padding: 40px 30px;
     }
     h1 {
-      color: #1a1a1a;
+      color: #4b4b4b;
       font-size: 24px;
       margin: 0 0 20px 0;
       font-weight: 600;
     }
     p {
-      color: #333333;
+      color: #4b4b4b;
       font-size: 16px;
       line-height: 1.6;
       margin: 0 0 15px 0;
     }
     .invitation-box {
-      background-color: #f9f9f9;
-      border-left: 4px solid #ffd700;
+      background-color: #f0fce6;
+      border-left: 4px solid #58cc02;
       padding: 20px;
       margin: 20px 0;
-      border-radius: 4px;
+      border-radius: 0 8px 8px 0;
     }
     .invitation-box p {
       margin: 5px 0;
     }
     .set-title {
       font-size: 18px;
-      font-weight: 600;
-      color: #1a1a1a;
+      font-weight: 700;
+      color: #43c000;
       margin: 10px 0;
     }
     .inviter-name {
-      color: #ffd700;
-      font-weight: 600;
+      color: #58cc02;
+      font-weight: 700;
     }
     .button {
       display: inline-block;
-      background-color: #ffd700;
-      color: #1a1a1a;
+      background-color: #58cc02;
+      color: #ffffff;
       text-decoration: none;
-      padding: 12px 30px;
-      border-radius: 4px;
-      font-weight: 600;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-weight: 700;
       margin: 20px 0;
       font-size: 16px;
+      letter-spacing: 0.3px;
     }
     .button:hover {
-      background-color: #ffed4e;
+      background-color: #43c000;
     }
     .help-text {
       font-size: 14px;
-      color: #666666;
+      color: #4b4b4b;
       margin-top: 20px;
     }
     .help-text a {
-      color: #0066cc;
+      color: #1cb0f6;
       text-decoration: none;
+      font-weight: 600;
     }
     .footer {
-      background-color: #f9f9f9;
+      background-color: #f0fce6;
       padding: 30px;
       text-align: center;
-      border-top: 1px solid #e0e0e0;
+      border-top: 2px solid #89e219;
     }
     .footer-text {
-      color: #ffd700;
+      color: #43c000;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <!-- Logo or branding here -->
+      <p class="header-title">${appName}</p>
     </div>
     <div class="content">
       <h1>Vous êtes invité(e) !</h1>
