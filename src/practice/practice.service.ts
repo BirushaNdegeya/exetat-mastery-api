@@ -18,6 +18,7 @@ export interface PracticeSubjectRow {
   id: string;
   name: string;
   description: string | null;
+  branch_type: string;
   icon: string | null;
   question_count: number;
   years: PracticeYearBlock[];
@@ -107,6 +108,7 @@ export class PracticeService {
           id: sub.id,
           name: sub.name,
           description: sub.description ?? null,
+          branch_type: sub.branch_type ?? 'Culture Générale',
           icon: (sub as { icon?: string | null }).icon ?? null,
           question_count: Number(sub.question_count ?? 0),
           years,
