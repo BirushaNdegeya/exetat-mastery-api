@@ -22,6 +22,7 @@ import { AdminModule } from './admin/admin.module';
 import { SharedQuizModule } from './shared-quiz/shared-quiz.module';
 import { TestYearsModule } from './test-years/test-years.module';
 import { PracticeModule } from './practice/practice.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { SchemaMigrationService } from './database/schema-migration.service';
 import { User } from './models/user.model';
 import { Profile } from './models/profile.model';
@@ -108,6 +109,7 @@ import { Invitation } from './models/invitation.model';
     AdminModule,
     SharedQuizModule,
     PracticeModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [

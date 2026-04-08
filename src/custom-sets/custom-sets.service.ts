@@ -20,6 +20,12 @@ export class CustomSetsService {
     });
   }
 
+  async getUserCustomSetCount(userId: string): Promise<number> {
+    return this.customSetModel.count({
+      where: { creator_id: userId },
+    });
+  }
+
   async getCustomSetById(id: string): Promise<CustomQuestionSet> {
     const set = await this.customSetModel.findByPk(id, {
       include: [CustomQuestion, User],

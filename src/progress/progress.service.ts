@@ -3,6 +3,11 @@ import { InjectModel } from '@nestjs/sequelize';
 import { UserProgress } from '../models/user-progress.model';
 import { Question } from '../models/question.model';
 
+export interface UserProgressSummary {
+  totalAnswered: number;
+  correctAnswers: number;
+}
+
 @Injectable()
 export class ProgressService {
   constructor(
@@ -18,6 +23,22 @@ export class ProgressService {
       where,
       include: [Question],
     });
+  }
+
+  async getUserProgressSummary(userId: string): Promise<UserProgressSummary> {
+    const [totalAnswered, correctAnswers] = await Promise.all([
+      this.userProgressModel.count({
+        where: { userId },
+      }),
+      this.userProgressModel.count({
+        where: { userId, is_correct: true },
+      }),
+    ]);
+
+    return {
+      totalAnswered,
+      correctAnswers,
+    };
   }
 
   async recordProgress(
